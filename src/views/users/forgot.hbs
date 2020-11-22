@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col-md-4 mx-auto">
+    <div class="card mt-4 text-center">
+      <div class="card-header">
+        <h1 class="h4">
+          Recuperar Contrasenya
+        </h1>
+      </div>
+        <img class="rounded-circle mx-auto d-block logo m-4" src="/image/logo.png" alt="Logo">
+      <div class="card-body">
+        <form action="/users/forgot" method="POST">
+          <div class="form-group">
+            <p>Introdueix el Correu registrat</p>
+            <input class="form-control" type="email" name="correo" id="correo" placeholder="Introduir Correu Electrònic">
+            <button type="submit" class="btn btn-primary btn-block">
+              Recuperar 
+            </button>
+            <p>Si ja tens compte entra <a href="/users/signin"><strong>aquí</a></strong></p>
+          </div>     
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

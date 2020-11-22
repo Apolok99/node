@@ -1,0 +1,24 @@
+<br></br>
+<div class="col-md-6 mx-auto">
+    <div class="card">
+        <div class="card-header">
+            <h3>Sistemes Multijugador</h3>
+        </div>
+        <div class="card-body">
+            <form action="/users/signup" method="POST">
+                <div class="form-group">
+                    <input class="form-control" type="text" name="nombres" id="nombres" placeholder="Introduir Nom" value="{{nombres}}">
+                    <input class="form-control" type="text" name="apellidos" id="apellidos" placeholder="Introduir Cognom" value="{{apellidos}}">
+                    <input class="form-control" type="email" name="correo" id="correo" placeholder="Introduir Correu Electrònic" value="{{correo}}">
+                    <input class="form-control" type="password" name="pswd" id="pswd" placeholder="Introduir Contrasenya" value="{{pswd}}">
+                    <input class="form-control" type="password" name="conf_pswd" id="conf_pswd" placeholder="Confirma Contrasenya" value="{{conf_pswd}}">
+                    <p>Estic d'acord amb les <a href="#"><strong>Condicions i Terminis</a></strong></p>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Registrar
+                    </button>
+                    <p><strong><a href="/users/forgot">T'has oblidat de la teva contrasenya?</a></strong></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,133 @@
+<div class="row">
+  <div class="col-md-4 mx-auto">
+    <div class="card mt-4 text-center">
+      <div class="card-header">
+        <h1 class="h4">
+          Partida
+        </h1>
+      </div>
+      <div class="card-body">
+        <p id="timerText"></p>
+        <p id="resultsText"></p>
+        <div class="form-group">
+            <button type="submit" id="pushButton" class="btn btn-primary btn-block">
+                Not ready 
+            </button>
+        </div>     
+        <button type="submit" id="disButton" class="btn btn-primary btn-block">
+                Desconecta
+        </button>
+        <br>
+        <p id="numPlayer">Number of players: 0</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    // Dades HTML
+    let parTextNumPlayer = document.getElementById('numPlayer');
+    let textButton = document.getElementById('pushButton');
+    let parTextStatusGame = document.getElementById('timerText');
+    let parTextResults = document.getElementById('resultsText');
+    let distanceSended = false;
+    let disconnecting = false;
+
+    // Dades que enviariem al servidor
+    let dataFetch = {
+        ready: false,
+        click: false,
+        inGameHTML: false,
+        timeClientServer: 0
+    };
+
+    setInterval(function(){
+        let startTime;
+        if(distanceSended == false){
+            startTime = Date.now(); 
+        }
+
+        if(disconnecting == false){
+            fetch('/gameinfo:')
+            .then(response => response.json())
+            .then(data => {
+                // Calculem la distancia del client al servidor
+                if(distanceSended == false){
+                    let endTime = Date.now();
+                    dataFetch.timeClientServer = (endTime - startTime) / 2;
+                    distanceSended = true;
+                }
+
+                // Actualizem el nombre de jugadors que hi ha la partida 
+                parTextNumPlayer.innerText = "Number of players: " + data.numPlayers;
+                
+                if(data.startGame){ // si la partida està per començar canvia el text del butó
+                    textButton.innerText = "Wait...";
+                }
+                else if(!data.startGame && !data.status){ // si algun jugador es retira, tornem a l'estat inicial
+                    dataFetch.ready = false;
+                    textButton.innerText = "Not ready";
+                    dataFetch.inGameHTML = false;
+                    dataFetch.click = false;
+                }
+
+                // Quan sigui el moment de clickar el botó, li canviem el text
+                if(data.message == "Corre clicka!!!!!!!!!!!!"){ 
+                    textButton.innerText = "Clicka!!!!!!!!!!!"
+                    dataFetch.inGameHTML = true;
+                }
+
+                if(data.message == "Mira els resultats" && data.results != -1){
+                    if(data.results == 0){
+                        parTextResults.innerText = "Felicitats! Has estat el primer!";
+                    }
+                    else{
+                        parTextResults.innerText = "Casi! Has quedat en " + (data.results+1) + "ª posició";
+                    }
+                }
+                else if (data.message == "Mira els resultats" && data.results == -1){
+                    parTextResults.innerText = "No li has donat al botó :( Sort a la següent ronda :)";
+                }
+                else 
+                {
+                    parTextResults.innerText = "";
+                }
+                // Anem actualitzant el text de l'estat del joc
+                parTextStatusGame.innerText = data.message;
+            })
+        }
+        
+    }, 200);
+
+    // Enviem info al servidor de quan pulsem el botó
+    document.getElementById('pushButton').onclick = () => {
+        fetch('/gameinfo:', {
+            headers: {
+                "Content-Type" : "application/json"
+            },
+            method: "POST",
+            body: JSON.stringify(dataFetch)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+
+        // Si l'estat és de <not ready>, passem a esperar que la resta de jugadors estiguin llestos
+        if (dataFetch.ready == false) {
+            dataFetch.ready = true;
+            textButton.innerText = "Waiting other players";
+        }
+
+        // Si ja li has donat click al botó durant la ronda, li enviariem <dataFetch.click> que farà que ignori la petició
+        if(dataFetch.click == false && dataFetch.inGameHTML)
+        {
+            dataFetch.click = true;
+        }
+    }
+
+    document.getElementById('disButton').onclick = () => {
+        disconnecting = true;
+        window.location = '/users/logout';
+    }
+
+</script>
