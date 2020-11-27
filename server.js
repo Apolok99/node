@@ -6,6 +6,7 @@ const session = require('express-session'); // Middelware que ajuda a guardar le
 const flash = require('connect-flash'); // Middelware que ens permet mostrar missatges en la pantalla sota unes certes condicions
 const passport = require('passport'); // Middelware de autentificacio
 const cookieParser = require('cookie-parser'); // Middelware que controla les cookies
+var osutils = require('os-utils');
 
 // Iniciem l'aplicació 
 const app = express();
@@ -59,3 +60,13 @@ app.use(express.static(path.join(__dirname,'public')));
 app.listen(app.get('port'), () => {
     console.log('Server en puerto', app.get('port'));
 });
+
+
+setInterval(function(){
+    console.log("Number of CPUs: " + osutils.cpuCount());
+
+  osutils.cpuUsage(function(v) {
+    console.log("CPU Usage (%) : " + v);
+  });
+  console.log("Free Memory (%): " + osutils.freememPercentage());
+}, 1000);
